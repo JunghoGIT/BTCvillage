@@ -1,0 +1,13 @@
+{% extends 'root.html' %}
+
+
+{% block contents %}
+<div class="container">
+    <div class="row">
+        {% include "_form.html" with form_title="회원가입" submit_label="회원가입" %}
+    </div>
+</div>
+
+
+{% endblock contents %}
+

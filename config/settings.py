@@ -52,13 +52,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'btcvillage.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR,'btcvillage','templates'),
+            os.path.join(BASE_DIR,'config','templates'),
                  ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -72,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'btcvillage.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 DATABASES = {

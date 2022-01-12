@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'bootstrap5',
     #Local apps
     'accounts',
+    'btc',
 ]
 
 MIDDLEWARE = [

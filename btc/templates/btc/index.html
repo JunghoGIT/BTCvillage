@@ -27,10 +27,6 @@ setInterval(function() {
             alert("목표가도달");
             above_signal_price = 100000;
             below_signal_price = 0;
-            $("#above_signal").empty();
-            $("#above_signal").append(100000)
-            $("#below_signal").empty();
-            $("#below_signal").append(100000)
         }
 
       }
@@ -123,13 +119,11 @@ function getSignalPrice(){
             <div class="col-md-4">
                 거래량알림
                 <div>
-
-                <input type="text" id="above_signal" value="100000">
+                <input type="text" id="above_signal" placeholder="100000">
                     USDT 이상
                     </div>
                 <div>
-
-                <input type="text" id="below_signal" value="0">
+                <input type="text" id="below_signal" placeholder="0">
                     USDT 이하
                 </div>
                 <input type="button" onclick="getSignalPrice()" value="적용">

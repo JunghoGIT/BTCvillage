@@ -10,6 +10,7 @@ app_name ='btc'
 
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('/', views.index, name='index'),
+    path('createorder/',views.createorder, name='createorder')
 ]
 

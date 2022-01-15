@@ -4,24 +4,32 @@ from django.contrib.auth import get_user_model
 # Create your models here.
 
 
-class Openorder(models.Model):
+class BuyOrder(models.Model):
     user = models.ForeignKey(get_user_model(), unique=True,on_delete=models.CASCADE)
-    open_price = models.FloatField()
-    limited_price = models.FloatField()
-    margin = models.IntegerField()
+    order_price = models.FloatField()
     amount = models.FloatField()
     deposit = models.FloatField()
-    liquidation_price = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
-    buy = models.BooleanField()
-    sell = models.BooleanField()
+
+
+class SellOrder(models.Model):
+    user = models.ForeignKey(get_user_model(), unique=True,on_delete=models.CASCADE)
+    order_price = models.FloatField()
+    amount = models.FloatField()
+    deposit = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Closedorder(models.Model):
     user = models.ForeignKey(get_user_model(),on_delete=models.CASCADE)
-    opened_price = models.FloatField()
+    position = models.CharField()
     closed_price = models.FloatField()
-    margin = models.IntegerField()
     amount = models.FloatField()
     deposit = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Wallet(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    average_price = models.FloatField()
+    amount = models.FloatField()

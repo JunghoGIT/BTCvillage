@@ -4,32 +4,30 @@ from django.contrib.auth import get_user_model
 # Create your models here.
 
 
-class BuyOrder(models.Model):
-    user = models.ForeignKey(get_user_model(), unique=True,on_delete=models.CASCADE)
-    order_price = models.FloatField()
-    amount = models.FloatField()
-    deposit = models.FloatField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-
-class SellOrder(models.Model):
-    user = models.ForeignKey(get_user_model(), unique=True,on_delete=models.CASCADE)
-    order_price = models.FloatField()
-    amount = models.FloatField()
-    deposit = models.FloatField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-
-class Closedorder(models.Model):
+class Order(models.Model):
     user = models.ForeignKey(get_user_model(),on_delete=models.CASCADE)
-    position = models.CharField()
+    order_price = models.FloatField(unique=True)
+    amount = models.FloatField()
+    deposit = models.FloatField()
+    position = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ClosedOrder(models.Model):
+    user = models.ForeignKey(get_user_model(),on_delete=models.CASCADE)
     closed_price = models.FloatField()
     amount = models.FloatField()
     deposit = models.FloatField()
+    position = models.CharField(max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Wallet(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,unique=True)
     average_price = models.FloatField()
-    amount = models.FloatField()
+    bitcoin = models.FloatField()
+
+
+class Binance_Candle(models.Model):
+    high_price = models.FloatField()
+    low_price = models.FloatField()

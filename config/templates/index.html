@@ -91,15 +91,15 @@ function getSignalPrice(){
     안녕하세요
 </div>
 
-    <!-- TradingView Widget BEGIN -->
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="tradingview-widget-container">
-                    <div id="tradingview_e21e3"></div>
-                    <div class="tradingview-widget-copyright">TradingView 제공 <a href="https://kr.tradingview.com/symbols/BTCUSDT/?exchange=BINANCE" rel="noopener" target="_blank"><span class="blue-text">BTCUSDT 차트</span></a></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                    <script type="text/javascript">
+<!-- TradingView Widget BEGIN -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="tradingview-widget-container">
+                <div id="tradingview_e21e3"></div>
+                <div class="tradingview-widget-copyright">TradingView 제공 <a href="https://kr.tradingview.com/symbols/BTCUSDT/?exchange=BINANCE" rel="noopener" target="_blank"><span class="blue-text">BTCUSDT 차트</span></a></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                <script type="text/javascript">
   new TradingView.widget(
   {
   "width": '100%',
@@ -117,31 +117,31 @@ function getSignalPrice(){
 }
   );
   </script>
-                </div>
-                <!-- TradingView Widget END -->
             </div>
-            <div class="col-md-4">
-                거래량알림
-                <div>
+            <!-- TradingView Widget END -->
+        </div>
+        <div class="col-md-4">
+            거래량알림
+            <div>
 
                 <input type="text" id="above_signal" value="100000">
-                    USDT 이상
-                    </div>
-                <div>
+                USDT 이상
+            </div>
+            <div>
 
                 <input type="text" id="below_signal" value="0">
-                    USDT 이하
-                </div>
-                <input type="button" onclick="getSignalPrice()" value="적용">
-
+                USDT 이하
             </div>
+            <input type="button" onclick="getSignalPrice()" value="적용">
 
         </div>
+
     </div>
+</div>
 
 
 <div class="container">
-        <div class="row">
+    <div class="row">
         <div class="col-md-3" style="font-size:3rem;">
             바이낸스
         </div>
@@ -149,7 +149,7 @@ function getSignalPrice(){
         <div class="col-md-3"  style="font-size:3rem;">
             업비트
         </div>
-            <div class="col-md-3"  style="font-size:3rem;">
+        <div class="col-md-3"  style="font-size:3rem;">
             김프
         </div>
     </div>
@@ -160,6 +160,27 @@ function getSignalPrice(){
         <div class="col-md-3" id='btc-upbit' style="font-size:3rem;">
         </div>
         <div class="col-md-3" id='gimchi' style="font-size:3rem;">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            {% if user.order_set %}
+            <table>
+                <th>포지션</th><th>주문 가격</th><th>수량</th><th>금액</th>
+            {% for order in user.order_set.all %}
+                <tr>
+                    <td>{{ order.position }}</td>
+                    <td>{{ order.order_price }}</td>
+                    <td>{{ order.amount }}</td>
+                    <td>{{ order.deposit }}</td>
+                </tr>
+
+            </table>
+            {% endfor %}
+            {% else%}
+            주문 정보가 존재하지 않습니다.
+            {% endif %}
+
         </div>
     </div>
 </div>

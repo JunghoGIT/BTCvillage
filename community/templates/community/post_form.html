@@ -1,0 +1,38 @@
+{% extends 'root.html' %}
+{% load bootstrap5 %}
+
+
+{% block contents %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-10">
+            <div class="card">
+                {% if form_title %}
+                <div class="card-header">
+                    {{form_title}}
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    {% if form %}
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                        <button type="submit" class="btn btn-primary">
+                            포스팅
+                        </button>
+                    </form>
+                    {% else%}
+                    <div class="alert alert-danger">
+                        form 객체가 없습니다.
+                    </div>
+                    {% endif%}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock contents %}

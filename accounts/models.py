@@ -9,6 +9,6 @@ class User(AbstractUser):
     usdt = models.FloatField(default=100000)
 
     def __str__(self):
-        return self.nickname
+        return self.username
 
 

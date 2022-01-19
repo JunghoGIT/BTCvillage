@@ -1,0 +1,108 @@
+{% extends 'root.html' %}
+{% load bootstrap5 humanize %}
+
+
+{% block contents %}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-12">
+                  <ul class="nav nav-tabs" role="tablist" id="myTab">
+            <li role="presentation" class="active"><a href="#bitcoin" aria-controls="bitcoin" role="tab" data-toggle="tab">bitcoin</a></li>
+            <li role="presentation"><a href="#altcoin" aria-controls="altcoin" role="tab" data-toggle="tab">altcoin</a></li>
+            <li role="presentation"><a href="#etc" aria-controls="etc" role="tab" data-toggle="tab">etc</a></li>
+        </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="bitcoin">
+                    {% if post_list_bit %}
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">포스팅 번호</th>
+                            <th scope="col">작성자</th>
+                            <th scope="col">제목</th>
+                            <th scope="col">작성일</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for post in post_list_bit %}
+                        <tr>
+                            <th scope="row">{{post.pk}}</th>
+                            <td>{{post.author.nickname}}</td>
+                            <td><a href="{% url 'community:post_detail' post.pk %}">{{post.title}} </a></td>
+                            <td>{{post.created_at |naturaltime }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    포스팅이 없습니다.
+                    {% endif %}
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="altcoin">
+                    {% if post_list_alt %}
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">포스팅 번호</th>
+                            <th scope="col">작성자</th>
+                            <th scope="col">제목</th>
+                            <th scope="col">작성일</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for post in post_list_alt %}
+                        <tr>
+                            <th scope="row">{{post.pk}}</th>
+                            <td>{{post.author.nickname}}</td>
+                            <td><a href="{% url 'community:post_detail' post.pk %}">{{post.title}} </a></td>
+                            <td>{{post.created_at |naturaltime }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    포스팅이 없습니다.
+                    {% endif %}
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="etc">
+                    {% if post_list_etc %}
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">포스팅 번호</th>
+                            <th scope="col">작성자</th>
+                            <th scope="col">제목</th>
+                            <th scope="col">작성일</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for post in post_list_etc %}
+                        <tr>
+                            <th scope="row">{{post.pk}}</th>
+                            <td>{{post.author.nickname}}</td>
+                            <td><a href="{% url 'community:post_detail' post.pk %}">{{post.title}} </a></td>
+                            <td>{{post.created_at |naturaltime }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    포스팅이 없습니다.
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+         <button type="button" class="btn btn-primary"><a href="{% url 'community:post_create' %}">포스팅 작성</a></button>
+
+    </div>
+</div>
+
+
+{% endblock contents %}

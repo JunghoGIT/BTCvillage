@@ -1,0 +1,51 @@
+{% extends 'root.html' %}
+{% load bootstrap5 humanize %}
+
+
+{% block contents %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    {{post.title}}
+                </div>
+                <div class="card-body">
+                    <strong>작성자 : {{post.author.nickname}}</strong><br><br><br>
+                    {{ post.content }}
+
+                    <hr>
+                    {{ post.created_at | naturaltime }}
+                </div>
+                <div class="card-footer">
+
+                    <div>
+                        {% if post.comment_set %}
+                        {% for comment in post.comment_set.all%}
+                        <div>
+                            <strong>{{ comment.author}}</strong>
+                            {{ comment.comment }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        <form action="{% url "community:comment_create" post.pk %}" method="POST">
+                        {% csrf_token %}
+                        {% bootstrap_form comment_form %}
+                        <input type="submit" value="댓글 쓰기" class="btn btn-primary btn-block" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+
+
+{% endblock contents %}
+
+

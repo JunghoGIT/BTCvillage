@@ -1,160 +1,398 @@
 {% extends 'root.html' %}
-
+{% load bootstrap5 %}
 
 {% block contents %}
 
 <script>
-var temp_btc;
-var temp_btc_upbit;
-var exchange_rate;
-var above_signal_price = 100000
-var below_signal_price = 0
+    var btc_binance;
+    var temp_btc_upbit;
+    var exchange_rate;
+    var above_signal_price = 100000
+    var below_signal_price = 0
+    let user_order_data;
+    const exchange_apikey = 's2xELmhM825086VbOe4i0C83cTsqdpT2'
+    var user_btc = parseFloat($('#btc_amount').text())
+    var buy_average = parseFloat($('#buy_average').text())
+    var buy_deposit = user_btc * buy_average
+    var profit;
 
-$(function(){
-setInterval(function() {
-      $.ajax({
-      type: "GET",
-      url: "https://api3.binance.com/api/v3/trades?limit=1&symbol=BTCUSDT",
-      data: {},
-      success: function(response){
-        temp_btc = parseFloat(response[0]['price']);
-        temp_btc = temp_btc.toFixed(2);
-        console.log(temp_btc);
-        $("#btc-binance").empty();
-        $("#btc-binance").append(temp_btc+'USDT');
-        console.log(above_signal_price);
-        if (above_signal_price<=temp_btc|| below_signal_price>=temp_btc){
-            alert("목표가도달");
-            above_signal_price = 100000;
-            below_signal_price = 0;
+    // upbit & binance price ajax
+    $(function () {
+        setInterval(function () {
+            $.ajax({
+                type: "GET",
+                url: "https://api3.binance.com/api/v3/trades?limit=1&symbol=BTCUSDT",
+                data: {},
+                success: function (response) {
+                    btc_binance = parseFloat(response[0]['price']);
+                    btc_binance = btc_binance.toFixed(2);
+                    console.log(btc_binance);
+                    $("#btc-binance").empty();
+                    $("#btc-binance").append(btc_binance + 'USDT');
+                    console.log(above_signal_price);
+                    if (above_signal_price <= btc_binance || below_signal_price >= btc_binance) {
+                        alert("목표가도달");
+                        above_signal_price = 100000;
+                        below_signal_price = 0;
+                    }
+                    order_trigger();
+
+                    profit = btc_binance * user_btc
+                    console.log(profit);
+                    profit = (profit / buy_deposit - 1) * 100
+                    profit = profit.toFixed(2)
+                    $("#expected_profit").empty();
+                    $("#expected_profit").append(profit + '%');
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "https://api.upbit.com/v1/trades/ticks?market=KRW-BTC&count=1",
+                data: {},
+                success: function (response) {
+                    btc_upbit = parseInt(response[0]['trade_price']);
+                    console.log(btc_upbit);
+                    $("#btc-upbit").empty();
+                    $("#btc-upbit").append(btc_upbit + '원');
+                    var exchange_binance = exchange_rate * btc_binance;
+                    var gimp = ((btc_upbit - exchange_binance) / exchange_binance * 100);
+                    $("#gimchi").empty();
+                    $("#gimchi").append(gimp.toFixed(2) + '%');
+                }
+            });
+        }, 1000);
+    });
+
+    // USDKRW exchange ajax
+
+    $(function () {
+        $.ajax({
+            type: "GET",
+            url: "https://v6.exchangerate-api.com/v6/4e6f73e8174dbad71cc9ffb2/latest/USD",
+            data: {},
+            success: function (response) {
+                console.log(response["conversion_rates"]["KRW"]);
+                var string_data = response["conversion_rates"]["KRW"]
+                exchange_rate = parseFloat(string_data);
+                exchange_rate = exchange_rate.toFixed(2)
+                console.log(exchange_rate);
+            }
+        }), setInterval(function () {
+            $.ajax({
+                type: "GET",
+                url: "https://v6.exchangerate-api.com/v6/4e6f73e8174dbad71cc9ffb2/latest/USD",
+                data: {},
+                success: function (response) {
+                    console.log(response["conversion_rates"]["KRW"]);
+                    var string_data = response["conversion_rates"]["KRW"]
+                    exchange_rate = parseFloat(string_data);
+                    exchange_rate = exchange_rate.toFixed(2)
+                    console.log(exchange_rate);
+                }
+            })
+        }, 3600000);
+    });
+
+
+
+    // signal price
+
+    function getSignalPrice() {
+        above_signal_price = parseInt($('#above_signal').val())
+        below_signal_price = parseInt($('#below_signal').val())
+    }
+
+    // trading way tab
+
+    $(document).ready(function () {
+
+
+        $('ul.tabs li').click(function () {
+            var tab_id = $(this).attr('data-tab');
+
+            $('ul.tabs li').removeClass('current');
+            $('.tab-content').removeClass('current');
+
+            $(this).addClass('current');
+            $("#" + tab_id).addClass('current');
+        })
+
+    })
+
+    // buy sell action
+
+    $(document).ready(function () {
+        console.log("ddd");
+        $.ajax({
+            type: "GET",
+            datatype: 'json',
+            url: "{% url 'btc:user_order_list' user.pk %}",
+            success: function (data) {
+                user_order_data = data
+                console.log("주문 정보 수집 성공")
+            },
+            error: function (response) {
+                console.log(response.responseJSON.errors);
+            }
+        }),
+            user_btc = parseFloat($('#btc_amount').text())
+        buy_average = parseFloat($('#buy_average').text())
+        buy_deposit = user_btc * buy_average
+    })
+
+    // order trigger function
+    function order_trigger() {
+
+        for (i in user_order_data) {
+            if (user_order_data[i].fields.position == "buy") {
+                if (user_order_data[i].fields.order_price >= btc_binance) {
+                    var param = {
+                        'pk': user_order_data[i].pk,
+                    };
+                    $.ajax({
+                        type: "POST",
+                        headers: {
+                            'X-CSRFTOKEN': '{{ csrf_token }}'
+                        },
+                        datatype: 'json',
+                        data: JSON.stringify(param),
+                        url: "{% url 'btc:contract_order_limit' %}",
+                        success: function (response) {
+                            location.reload();
+                        },
+                        error: function (response) {
+                            console.log(response.responseJSON.errors);
+                        }
+                    })
+                }
+            }
+            else {
+                if (user_order_data[i].fields.order_price <= btc_binance) {
+                    var param = {
+                        'pk': user_order_data[i].pk,
+                    };
+                    $.ajax({
+                        type: "POST",
+                        headers: {
+                            'X-CSRFTOKEN': '{{ csrf_token }}'
+                        },
+                        datatype: 'json',
+                        data: JSON.stringify(param),
+                        url: "{% url 'btc:contract_order_limit' %}",
+                        success: function (response) {
+                            location.reload();
+                        },
+                        error: function (response) {
+                            console.log(response.responseJSON.errors);
+                        }
+                    })
+                }
+            }
         }
-
-      }
-    });
-     $.ajax({
-      type: "GET",
-      url: "https://api.upbit.com/v1/trades/ticks?market=KRW-BTC&count=1",
-      data: {},
-      success: function(response){
-        temp_btc_upbit = parseInt(response[0]['trade_price']);
-        console.log(temp_btc_upbit);
-        $("#btc-upbit").empty();
-        $("#btc-upbit").append(temp_btc_upbit+'원');
-        var exchange_binance = exchange_rate*temp_btc;
-        var gimp=((temp_btc_upbit - exchange_binance)/exchange_binance*100);
-        $("#gimchi").empty();
-        $("#gimchi").append(gimp.toFixed(2)+'%');
-      }
-    });
-    }, 1000);
-});
-
-$(function(){$.ajax({
-      type: "GET",
-      url: "https://exchange.jaeheon.kr:23490/query/USDKRW",
-      data: {},
-      success: function(response){
-        exchange_rate = parseFloat(response['USDKRW'][0]);
-        exchange_rate = exchange_rate.toFixed(2)
-        console.log(exchange_rate);
-      }
-    }),setInterval(function() {
-      $.ajax({
-      type: "GET",
-      url: "https://exchange.jaeheon.kr:23490/query/USDKRW",
-      data: {},
-      success: function(response){
-        exchange_rate = parseFloat(response['USDKRW'][0]);
-        exchange_rate = exchange_rate.toFixed(2)
-        console.log(exchange_rate);
-      }
-    })}, 3600000);
-});
+    }
 
 
 
-// signal price
 
-function getSignalPrice(){
-    above_signal_price = parseInt($('#above_signal').val())
-    below_signal_price = parseInt($('#below_signal').val())
-}
+    // market order hidden price value add
+    function add_order_price() {
+        var market_form = document.forms['maket_order'];
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'order_price';
+        input.value = btc_binance;
+        market_form.appendChild(input);
+    }
+
+
+    // limit order validator
+    function validator () {
+
+        if ($("#limit_form").find("select[name=position]").val() == 'buy' && $("#limit_form").find("input[name=order_price]").val() >= btc_binance) {
+            alert("현재가보다 높은 가격에 매수 지정가 주문은 불가능합니다.");
+            return false;
+        } else if ($("#limit_form").find("select[name=position]").val() == 'sell' && $("#limit_form").find("input[name=order_price]").val() <= btc_binance) {
+            alert("현재가보다 낮은 가격에 매도 지정가 주문은 불가능합니다.");
+            return false;
+        }
+        return true;
+    }
+
 
 </script>
+<style>
+    ul.tabs {
+        margin: 0px;
+        padding: 0px;
+        list-style: none;
+    }
+
+    ul.tabs li {
+        background: none;
+        color: #222;
+        display: inline-block;
+        padding: 10px 15px;
+        cursor: pointer;
+    }
+
+    ul.tabs li.current {
+        background: #ededed;
+        color: #222;
+    }
+
+    .tab-content {
+        display: none;
+        background: #ededed;
+        padding: 15px;
+    }
+
+    .tab-content.current {
+        display: inherit;
+    }
+</style>
 
 
+<!-- TradingView Widget BEGIN -->
 <div class="container">
-    안녕하세요
+    <div class="row">
+        <div class="col-md-8">
+            <div class="tradingview-widget-container">
+                <div id="tradingview_e21e3"></div>
+                <div class="tradingview-widget-copyright">TradingView 제공 <a
+                        href="https://kr.tradingview.com/symbols/BTCUSDT/?exchange=BINANCE" rel="noopener"
+                        target="_blank"><span class="blue-text">BTCUSDT 차트</span></a></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                <script type="text/javascript">
+                    new TradingView.widget(
+                        {
+                            "width": '100%',
+                            "height": 500,
+                            "symbol": "BINANCE:BTCUSDT",
+                            "interval": "D",
+                            "timezone": "Etc/UTC",
+                            "theme": "light",
+                            "style": "1",
+                            "locale": "kr",
+                            "toolbar_bg": "#f1f3f6",
+                            "enable_publishing": false,
+                            "allow_symbol_change": true,
+                            "container_id": "tradingview_e21e3"
+                        }
+                    );
+                </script>
+            </div>
+            <!-- TradingView Widget END -->
+        </div>
+        <div class="col-md-4">
+            거래량알림
+            <div>
+                <input type="text" id="above_signal" placeholder="100000">
+                USDT 이상
+            </div>
+            <div>
+                <input type="text" id="below_signal" placeholder="0">
+                USDT 이하
+            </div>
+            <input type="button" onclick="getSignalPrice()" value="적용">
+            <div>
+                <ul class="tabs">
+                    <li class="tab-link current" data-tab="tab-1">지정가</li>
+                    <li class="tab-link" data-tab="tab-2">시장가</li>
+                </ul>
+
+                <div id="tab-1" class="tab-content current">
+                    <form method="post" action="{% url 'btc:create_order_limit'%}" id="limit_form" onsubmit="return validator()">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                        {{ form.errors }}
+                        <input type="submit" class="btn btn-primary mt-3" id="buy_limit" value="주문"></input>
+                        <br>
+
+                    </form>
+
+                </div>
+                <div id="tab-2" class="tab-content">
+                    <form method="post" action="{% url 'btc:contract_order_market'%}" name="maket_order"
+                        onSubmit="add_order_price()">
+                        {% csrf_token %}
+                        {% bootstrap_form form exclude='order_price' %}
+                        <button type="submit" class="btn btn-primary mt-3" id="buy_market">주문</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
-    <!-- TradingView Widget BEGIN -->
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="tradingview-widget-container">
-                    <div id="tradingview_e21e3"></div>
-                    <div class="tradingview-widget-copyright">TradingView 제공 <a href="https://kr.tradingview.com/symbols/BTCUSDT/?exchange=BINANCE" rel="noopener" target="_blank"><span class="blue-text">BTCUSDT 차트</span></a></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                    <script type="text/javascript">
-  new TradingView.widget(
-  {
-  "width": '100%',
-  "height": 500,
-  "symbol": "BINANCE:BTCUSDT",
-  "interval": "D",
-  "timezone": "Etc/UTC",
-  "theme": "light",
-  "style": "1",
-  "locale": "kr",
-  "toolbar_bg": "#f1f3f6",
-  "enable_publishing": false,
-  "allow_symbol_change": true,
-  "container_id": "tradingview_e21e3"
-}
-  );
-  </script>
-                </div>
-                <!-- TradingView Widget END -->
-            </div>
-            <div class="col-md-4">
-                거래량알림
-                <div>
-                <input type="text" id="above_signal" placeholder="100000">
-                    USDT 이상
-                    </div>
-                <div>
-                <input type="text" id="below_signal" placeholder="0">
-                    USDT 이하
-                </div>
-                <input type="button" onclick="getSignalPrice()" value="적용">
-
-            </div>
-
-        </div>
-    </div>
-
 
 <div class="container">
-        <div class="row">
+    <div class="row">
         <div class="col-md-3" style="font-size:3rem;">
             바이낸스
         </div>
 
-        <div class="col-md-3"  style="font-size:3rem;">
+        <div class="col-md-3" style="font-size:3rem;">
             업비트
         </div>
-            <div class="col-md-3"  style="font-size:3rem;">
+        <div class="col-md-3" style="font-size:3rem;">
             김프
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3" id='btc-binance' style="font-size:3rem;">
+        <div class="col-md-3" id='btc-binance' style="font-size:2rem;">
+        </div>
+        <div class="col-md-3" id='btc-upbit' style="font-size:2rem;">
+        </div>
+        <div class="col-md-3" id='gimchi' style="font-size:2rem;">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            {% if user.order_set.all %}
+            <table class="table" style="width:100%; font-size:1.5rem; margin-top:1rem;">
+                <th>포지션</th>
+                <th>주문 가격</th>
+                <th>수량</th>
+                <th>금액</th>
+                <th>주문취소</th>
+                {% for order in user.order_set.all %}
+                <tr>
+                    <td>{{ order.position }}</td>
+                    <td>{{ order.order_price }}USDT</td>
+                    <td>{{ order.amount }}BTC</td>
+                    <td>{{ order.deposit }}USDT</td>
+                    <td><strong><a href="{% url 'btc:order_delete' order.pk %}" style="color:red;">주문 취소</a></strong>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <table class="table" style="width:100%; font-size:1.5rem; margin-top:1rem;">
+                <th>포지션</th>
+                <th>주문 가격</th>
+                <th>수량</th>
+                <th>금액</th>
+                <th>주문취소</th>
+            </table>
+            주문 정보가 존재하지 않습니다.
+            {% endif %}
+
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    투자현황
+                </div>
+                <div class="card-body">
+                    <p>보유 BTC : <span id="btc_amount">{{user.wallet_set.get.bitcoin}}</span></p>
+                    <p>평균 매수가 : <span id="buy_average">{{user.wallet_set.get.average_price}}</span></p>
+                    <p>예상 수익률 :<span id="expected_profit"></span></p>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-3" id='btc-upbit' style="font-size:3rem;">
-        </div>
-        <div class="col-md-3" id='gimchi' style="font-size:3rem;">
-        </div>
+
     </div>
 </div>
 
@@ -165,4 +403,3 @@ function getSignalPrice(){
 </span>
 
 {% endblock contents %}
-

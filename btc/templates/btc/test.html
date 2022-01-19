@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{{ test1 }}
+</body>
+</html>
+
+
+$("#limit_form").submit(function() {
+if( $(this).children("input[name=position]").val() =='buy' && $(this).children("input[name=order_price]").val() >= btc_binance ) {
+alert("현재가보다 높은 가격에 매수 지정가 주문은 불가능합니다.");
+return false;
+} else if ($(this).children("input[name=position]").val() =='sell' && $(this).children("input[name=order_price]").val() <= btc_binance){
+alert("현재가보다 낮은 가격에 매도 지정가 주문은 불가능합니다.");
+return false;
+}
+return true;
+});

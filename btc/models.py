@@ -31,3 +31,7 @@ class Wallet(models.Model):
 class Binance_Candle(models.Model):
     high_price = models.FloatField()
     low_price = models.FloatField()
+
+class Exchange(models.Model):
+    usd_krw = models.FloatField()
+    updated_at = models.DateTimeField(auto_now=True)

@@ -29,7 +29,6 @@
                     console.log(btc_binance);
                     $("#btc-binance").empty();
                     $("#btc-binance").append(btc_binance + 'USDT');
-                    console.log(above_signal_price);
                     if (above_signal_price <= btc_binance || below_signal_price >= btc_binance) {
                         alert("목표가도달");
                         above_signal_price = 100000;
@@ -38,7 +37,6 @@
                     order_trigger();
 
                     profit = btc_binance * user_btc
-                    console.log(profit);
                     profit = (profit / buy_deposit - 1) * 100
                     profit = profit.toFixed(2)
                     $("#expected_profit").empty();
@@ -51,7 +49,6 @@
                 data: {},
                 success: function (response) {
                     btc_upbit = parseInt(response[0]['trade_price']);
-                    console.log(btc_upbit);
                     $("#btc-upbit").empty();
                     $("#btc-upbit").append(btc_upbit + '원');
                     var exchange_binance = exchange_rate * btc_binance;
@@ -68,25 +65,23 @@
     $(function () {
         $.ajax({
             type: "GET",
-            url: "https://v6.exchangerate-api.com/v6/4e6f73e8174dbad71cc9ffb2/latest/USD",
+            url: "{% url 'btc:get_exchange' %}",
             data: {},
             success: function (response) {
-                console.log(response["conversion_rates"]["KRW"]);
-                var string_data = response["conversion_rates"]["KRW"]
+                console.log(response[0].fields.usd_krw);
+                var string_data = response[0].fields.usd_krw
                 exchange_rate = parseFloat(string_data);
-                exchange_rate = exchange_rate.toFixed(2)
                 console.log(exchange_rate);
             }
         }), setInterval(function () {
             $.ajax({
                 type: "GET",
-                url: "https://v6.exchangerate-api.com/v6/4e6f73e8174dbad71cc9ffb2/latest/USD",
+                url: "{% url 'btc:get_exchange' %}",
                 data: {},
                 success: function (response) {
-                    console.log(response["conversion_rates"]["KRW"]);
-                    var string_data = response["conversion_rates"]["KRW"]
+                    console.log(response[0].fields.usd_krw);
+                    var string_data = response[0].fields.usd_krw
                     exchange_rate = parseFloat(string_data);
-                    exchange_rate = exchange_rate.toFixed(2)
                     console.log(exchange_rate);
                 }
             })

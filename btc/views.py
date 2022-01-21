@@ -3,7 +3,7 @@ from .forms import OrderForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-from .models import Order,Wallet,ClosedOrder
+from .models import Order,Wallet,ClosedOrder,Exchange
 from django.http import JsonResponse, HttpResponse
 from django.core import serializers
 import json
@@ -15,7 +15,6 @@ from django import forms
 @login_required
 def index(request):
     form = OrderForm(request.user)
-    wallet = Wallet
     return render(request,'btc/index.html',{
         'form' : form
     })
@@ -221,3 +220,9 @@ def order_delete(request, pk):
         order.delete()
         messages.success(request, "매도 주문 취소")
         return redirect('btc:index')
+
+def get_exchange(request):
+    exchange = serializers.serialize('json',Exchange.objects.filter(pk=1))
+
+
+    return HttpResponse(exchange , content_type="text/json-comment-filtered")

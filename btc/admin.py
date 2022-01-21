@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Order, Wallet, ClosedOrder,Binance_Candle
+from .models import Order, Wallet, ClosedOrder,Binance_Candle, Exchange
 # Register your models here.
 
 
@@ -41,3 +41,11 @@ class Binance_CandleAdmin(admin.ModelAdmin):
         'high_price',
         'low_price',
     ]
+
+@admin.register(Exchange)
+class ExchangeAdmin(admin.ModelAdmin):
+    list_display = [
+        'usd_krw',
+        'updated_at',
+    ]
+

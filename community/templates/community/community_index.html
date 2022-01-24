@@ -4,23 +4,29 @@
 
 {% block contents %}
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">-->
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">-->
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>-->
 
-<div class="container">
-
+<div class="container sd-remove mt-3">
     <div class="row">
         <div class="col-md-12">
-                  <ul class="nav nav-tabs" role="tablist" id="myTab">
-            <li role="presentation" class="active"><a href="#bitcoin" aria-controls="bitcoin" role="tab" data-toggle="tab">bitcoin</a></li>
-            <li role="presentation"><a href="#altcoin" aria-controls="altcoin" role="tab" data-toggle="tab">altcoin</a></li>
-            <li role="presentation"><a href="#etc" aria-controls="etc" role="tab" data-toggle="tab">etc</a></li>
-        </ul>
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active" id="bitcoin">
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="btctab-tab" data-bs-toggle="tab" data-bs-target="#btctab" type="button" role="tab" aria-controls="btctab" aria-selected="true">비트코인</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="alttab-tab" data-bs-toggle="tab" data-bs-target="#alttab" type="button" role="tab" aria-controls="alttab" aria-selected="false">알트코인</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="etctab-tab" data-bs-toggle="tab" data-bs-target="#etctab" type="button" role="tab" aria-controls="etctab" aria-selected="false">잡담</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="btctab" role="tabpanel" aria-labelledby="btctab-tab">
                     {% if post_list_bit %}
-                    <table class="table">
+                    <table class="table" style="background-color: #f1f4fb;">
                         <thead>
                         <tr>
                             <th scope="col">포스팅 번호</th>
@@ -29,12 +35,12 @@
                             <th scope="col">작성일</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody style="background-color: #ffffff;">
                         {% for post in post_list_bit %}
                         <tr>
                             <th scope="row">{{post.pk}}</th>
                             <td>{{post.author.nickname}}</td>
-                            <td><a href="{% url 'community:post_detail' post.pk %}">{{post.title}} </a></td>
+                            <td><a href="{% url 'community:post_detail' post.pk %}" style="text-decoration-line : none;">{{post.title}} </a></td>
                             <td>{{post.created_at |naturaltime }}</td>
                         </tr>
                         {% endfor %}
@@ -44,9 +50,9 @@
                     포스팅이 없습니다.
                     {% endif %}
                 </div>
-                <div role="tabpanel" class="tab-pane fade" id="altcoin">
+                <div class="tab-pane fade" id="alttab" role="tabpanel" aria-labelledby="alttab-tab">
                     {% if post_list_alt %}
-                    <table class="table">
+                    <table class="table" style="background-color: #f1f4fb;">
                         <thead>
                         <tr>
                             <th scope="col">포스팅 번호</th>
@@ -55,12 +61,12 @@
                             <th scope="col">작성일</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody style="background-color: #ffffff;">
                         {% for post in post_list_alt %}
                         <tr>
                             <th scope="row">{{post.pk}}</th>
                             <td>{{post.author.nickname}}</td>
-                            <td><a href="{% url 'community:post_detail' post.pk %}">{{post.title}} </a></td>
+                            <td><a href="{% url 'community:post_detail' post.pk %}" style="text-decoration-line : none;">{{post.title}} </a></td>
                             <td>{{post.created_at |naturaltime }}</td>
                         </tr>
                         {% endfor %}
@@ -70,9 +76,10 @@
                     포스팅이 없습니다.
                     {% endif %}
                 </div>
-                <div role="tabpanel" class="tab-pane fade" id="etc">
+                <div class="tab-pane fade" id="etctab" role="tabpanel" aria-labelledby="etctab-tab">
                     {% if post_list_etc %}
-                    <table class="table">
+
+                    <table class="table" style="background-color: #f1f4fb;">
                         <thead>
                         <tr>
                             <th scope="col">포스팅 번호</th>
@@ -81,12 +88,12 @@
                             <th scope="col">작성일</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody style="background-color: #ffffff;">
                         {% for post in post_list_etc %}
                         <tr>
                             <th scope="row">{{post.pk}}</th>
                             <td>{{post.author.nickname}}</td>
-                            <td><a href="{% url 'community:post_detail' post.pk %}">{{post.title}} </a></td>
+                            <td><a href="{% url 'community:post_detail' post.pk %}" style="text-decoration-line : none;">{{post.title}} </a></td>
                             <td>{{post.created_at |naturaltime }}</td>
                         </tr>
                         {% endfor %}
@@ -95,14 +102,15 @@
                     {% else %}
                     포스팅이 없습니다.
                     {% endif %}
-
                 </div>
+                <button type="button" class="btn btn-primary" style="font-color:FFF;"><a href="{% url 'community:post_create' %}" style="color:#FAFAD2; text-decoration-line : none;">포스팅 작성</a></button>
             </div>
+
         </div>
-         <button type="button" class="btn btn-primary"><a href="{% url 'community:post_create' %}">포스팅 작성</a></button>
+    </div>
+
+    <div class="container">
 
     </div>
-</div>
 
-
-{% endblock contents %}
+    {% endblock contents %}

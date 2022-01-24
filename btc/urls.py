@@ -16,6 +16,8 @@ urlpatterns = [
     path('order/list/<int:pk>', views.user_order_list, name='user_order_list'),
     path('order/contract/limit', views.contract_order_limit, name='contract_order_limit'),
     path('order/delete/<int:pk>', views.order_delete, name='order_delete'),
-    path('exchange/', views.get_exchange, name='get_exchange')
+    path('exchange/', views.get_exchange, name='get_exchange'),
+    path('reset/account/<int:pk>', views.reset_account, name='reset_account'),
+    path('rank', views.rank, name='rank')
 ]
 

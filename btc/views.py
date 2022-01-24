@@ -226,3 +226,20 @@ def get_exchange(request):
 
 
     return HttpResponse(exchange , content_type="text/json-comment-filtered")
+
+@login_required
+def reset_account(request, pk):
+    user = get_user_model().objects.get(pk=pk)
+    Order.objects.filter(user_id=pk).delete()
+    Wallet.objects.filter(user_id=pk).update(bitcoin=0,average_price=0)
+    user.usdt = 100000
+    user.save()
+    messages.success(request, "주문, 지갑, 테더 정보를 초기화 했습니다.")
+    return redirect('btc:index')
+
+
+def rank(request):
+    user_rank = get_user_model().objects.all().order_by('-usdt')[:10]
+    return render(request,'btc/rank.html',{
+        'user_rank':user_rank
+    })

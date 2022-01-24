@@ -8,7 +8,10 @@ class OrderForm(forms.ModelForm):
         ('buy','매수'),
         ('sell','매도'),
     ]
-    position = forms.ChoiceField(widget=forms.Select, choices=position_choice)
+    position = forms.ChoiceField(widget=forms.Select, choices=position_choice, label='포지션')
+    order_price = forms.FloatField(label='주문 가격')
+    amount= forms.FloatField(label='주문 수량')
+
 
     class Meta:
         model = Order

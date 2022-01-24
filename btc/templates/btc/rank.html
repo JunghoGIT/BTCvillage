@@ -1,0 +1,41 @@
+{% extends 'root.html' %}
+{% load bootstrap5 humanize %}
+
+
+{% block contents %}
+
+<div class="container sd-remove mt-3">
+    <div class="row">
+        <div class="col-md-12">
+
+            {% if user_rank %}
+            <table class="table" style="background-color: #f1f4fb;">
+                <thead>
+                <tr>
+                    <th scope="col">등수</th>
+                    <th scope="col">닉네임</th>
+                    <th scope="col">보유 테더</th>
+
+                </tr>
+                </thead>
+                <tbody style="background-color: #ffffff;">
+                {% for rank in user_rank %}
+                <tr>
+                    <td scope="row">{{ forloop.counter }}</td>
+                    <td>{{rank.nickname}}</td>
+                    <td>{{rank.usdt}} </td>
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            포스팅이 없습니다.
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock contents %}

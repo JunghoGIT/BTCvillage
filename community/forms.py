@@ -14,11 +14,12 @@ class PostForm(forms.ModelForm):
         }
 
 class CommentForm(forms.ModelForm):
+    comment = forms.CharField(label='',)
     class Meta:
         model = Comment
         fields = [
             'comment',
         ]
         widgets = {
-            'comment': forms.Textarea(attrs={"rows": 2})
+            'comment': forms.Textarea(attrs={"rows": 2}, )
         }

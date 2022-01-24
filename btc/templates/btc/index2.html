@@ -217,11 +217,46 @@
 </script>
 
 
+
+
 <!-- TradingView Widget BEGIN -->
-<div class="container">
+<div class="container sd-remove">
     <div class="row">
         <div class="col-md-8">
-            <div class="tradingview-widget-container">
+            <div class="div-title" style="margin-top: 10px;" id="price-container">
+                <div class="coin-div" style="padding-left: 0;">
+                    <img src="static/BTC.png" class="exchange-logo"> <span style="font-weight: 600;">비트코인</span> <span style="font-size: 16px; color: gray;">BTC/USDT</span>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 price-header">
+                        <a href="https://www.binance.com/en/trade/BTC_USDT?layout=pro">
+                            <img src="static/binance-logo.svg" class="exchange-logo"> 바이낸스
+                            <img src="static/link.png" class="link-icon">
+                        </a>
+                    </div>
+                    <div class="col-md-4 price-header">
+                        <a href="https://upbit.com/exchange?code=CRIX.UPBIT.KRW-BTC">
+                            <img src="static/upbit-logo.png" class="exchange-logo"> 업비트
+                            <img src="static/link.png" class="link-icon">
+                        </a>
+                    </div>
+                    <div class="col-md-4 price-header">
+                        김프
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div id='btc-binance-div' class="btc-binance-body"></div><span style="font-size: 16px; color: gray;">USDT</span>
+                    </div>
+                    <div class="col-md-4">
+                        <div id='btc-upbit-div' class="btc-binance-body"></div><span style="font-size: 16px; color: gray;">KRW</span>
+                    </div>
+                    <div class="col-md-4 btc-binance-body" id='gimchi-div'>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tradingview-widget-container div-card" style="margin-top: 0;">
                 <div id="tradingview_e21e3"></div>
                 <div class="tradingview-widget-copyright">TradingView 제공 <a
                         href="https://kr.tradingview.com/symbols/BTCUSDT/?exchange=BINANCE" rel="noopener"
@@ -231,7 +266,7 @@
                     new TradingView.widget(
                         {
                             "width": '100%',
-                            "height": 500,
+                            "height": 530,
                             "symbol": "BINANCE:BTCUSDT",
                             "interval": "D",
                             "timezone": "Etc/UTC",
@@ -249,24 +284,33 @@
             <!-- TradingView Widget END -->
         </div>
         <div class="col-md-4">
-            거래량알림
-            <div>
-                <input type="text" id="above_signal" placeholder="100000">
-                USDT 이상
+            <div class="div-card" id="ex-alert">
+                <div class="div-title">
+                    시장가알림
+                </div>
+                <div class="div-contents">
+                    <div>
+                        <input type="radio" name="sel_transaction" value="up" onclick="controlHidden(this.value)" checked="checked"> 지정가 이상 (USDT) &nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="sel_transaction" value="down" onclick="controlHidden(this.value)"> 지정가 이하 (USDT)
+                    </div>
+                    <div id="above_input" class="">
+                        <input type="text" id="above_signal" class="alert-input alert-input-style" placeholder="100000">
+                    </div>
+                    <div id="below_input" class="hidden">
+                        <input type="text" id="below_signal" class="alert-input alert-input-style" placeholder="0">
+                    </div>
+                    <input type="button" onclick="getSignalPrice()" value="알림 설정" class="alert-btn">
+                </div>
             </div>
-            <div>
-                <input type="text" id="below_signal" placeholder="0">
-                USDT 이하
-            </div>
-            <input type="button" onclick="getSignalPrice()" value="적용">
-            <div>
+            <div class="div-card" style="height: 450px;">
+                <div class="div-title" style="margin-top: 10px;">매수 / 매도</div>
                 <ul class="tabs">
                     <li class="tab-link current" data-tab="tab-1">지정가</li>
                     <li class="tab-link" data-tab="tab-2">시장가</li>
                 </ul>
 
-                <div id="tab-1" class="tab-content current">
-                    <form method="post" action="{% url 'btc:create_order_limit'%}" id="limit_form" onsubmit="return validator()">
+                <div id="tab-1" class="tab-content current" style="height: 355px;">
+               <form method="post" action="{% url 'btc:create_order_limit'%}" id="limit_form" onsubmit="return validator()">
                         {% csrf_token %}
                         {% bootstrap_form form %}
                         {{ form.errors }}
@@ -276,7 +320,7 @@
                     </form>
 
                 </div>
-                <div id="tab-2" class="tab-content">
+                <div id="tab-2" class="tab-content" style="height: 355px;">
                     <form method="post" action="{% url 'btc:contract_order_market'%}" name="maket_order"
                         onSubmit="add_order_price()">
                         {% csrf_token %}
@@ -291,37 +335,20 @@
 </div>
 
 
-<div class="container">
+<div class="container sd-remove">
     <div class="row">
-        <div class="col-md-3" style="font-size:3rem;">
-            바이낸스
-        </div>
+        <div class="col-md-8 panel">
+            <div class="div-card">
+                <div class="div-title">거래 대기 주문</div>
 
-        <div class="col-md-3" style="font-size:3rem;">
-            업비트
-        </div>
-        <div class="col-md-3" style="font-size:3rem;">
-            김프
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-3" id='btc-binance' style="font-size:2rem;">
-        </div>
-        <div class="col-md-3" id='btc-upbit' style="font-size:2rem;">
-        </div>
-        <div class="col-md-3" id='gimchi' style="font-size:2rem;">
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-8">
-            {% if user.order_set.all %}
-            <table class="table" style="width:100%; font-size:1.5rem; margin-top:1rem;">
-                <th>포지션</th>
-                <th>주문 가격</th>
-                <th>수량</th>
-                <th>금액</th>
-                <th>주문취소</th>
-                {% for order in user.order_set.all %}
+                <table class="table" style="width:100%; font-size:1rem;">
+                    <th>포지션</th>
+                    <th>주문 가격</th>
+                    <th>수량</th>
+                    <th>금액</th>
+                    <th>주문취소</th>
+                    {% if user.order_set.all %}
+                    {% for order in user.order_set.all %}
                 <tr>
                     <td>{{ order.position }}</td>
                     <td>{{ order.order_price }}USDT</td>
@@ -331,28 +358,25 @@
                     </td>
                 </tr>
                 {% endfor %}
-            </table>
-            {% else %}
-            <table class="table" style="width:100%; font-size:1.5rem; margin-top:1rem;">
-                <th>포지션</th>
-                <th>주문 가격</th>
-                <th>수량</th>
-                <th>금액</th>
-                <th>주문취소</th>
-            </table>
-            주문 정보가 존재하지 않습니다.
-            {% endif %}
+                </table>
 
+
+                      {% else %}
+                                </table>
+                            주문 정보가 존재하지 않습니다.
+            {% endif %}
+            </div>
         </div>
+
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
+            <div class="div-card">
+                <div class="div-title">
                     투자현황
                 </div>
-                <div class="card-body">
+                <div class="div-contents">
                     <p>보유 BTC : <span id="btc_amount">{{user.wallet_set.get.bitcoin}}</span></p>
                     <p>평균 매수가 : <span id="buy_average">{{user.wallet_set.get.average_price}}</span></p>
-                    <p>예상 수익률 :<span id="expected_profit"></span></p>
+                    <p>예상 수익률 : <span id="expected_profit"></span></p>
                 </div>
             </div>
         </div>
@@ -366,5 +390,30 @@
 
 
 </span>
+
+
+<script>
+    // noti alert radiobox
+    const aboveInput = document.querySelector("#above_input");
+    const belowInput = document.querySelector("#below_input");
+
+    const HIDDEN_CLASSNAME = "hidden";
+
+    function controlHidden(value) {
+        if(value === "up" ) {
+            if(belowInput.classList !== "") {
+                belowInput.classList.add(HIDDEN_CLASSNAME);
+            }
+            aboveInput.classList.remove(HIDDEN_CLASSNAME);
+        } else if(value === "down") {
+            console.log("down");
+            if(aboveInput.classList !== "") {
+                aboveInput.classList.add(HIDDEN_CLASSNAME);
+            }
+            belowInput.classList.remove(HIDDEN_CLASSNAME);
+        }
+    }
+</script>
+
 
 {% endblock contents %}

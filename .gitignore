@@ -2,3 +2,4 @@
 /media
 /static
 secrets.json
+/config/settings.py

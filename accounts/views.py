@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login as Sign_login,logout as auth_logout
-from .forms import SignupForm
+from .forms import SignupForm, CustomLoginForm
 from btc.models import Wallet
 # Create your views here.
 
@@ -21,7 +21,11 @@ def signup(request):
             'form': form
         })
 
-login = LoginView.as_view(template_name='accounts/login_form.html')
+class CustomLoginview(LoginView):
+    form_class = CustomLoginForm
+
+
+login = CustomLoginview.as_view(template_name='accounts/login_form.html')
 
 def logout(request):
     auth_logout(request)

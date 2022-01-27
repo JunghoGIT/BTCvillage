@@ -46,7 +46,7 @@
                 </div>
             </div>
             {% if user.is_authenticated %}
-            <div id="user_info" class="user-info-text" style="margin-right:2rem; width:10rem;">
+            <div id="user_info" class="user-info-text" style="margin-right:2rem; width:13rem;">
                 <div class="row">
                     <span>[{{ user.nickname }} 님] <a href="{% url 'btc:reset_account' user.pk %}" style="color:red;">계정 초기화</a></span>
                 </div>

@@ -4,4 +4,4 @@ pillow=9.0.0
 psycopg2=2.9.3
 django-bootstrap-v5
 python-binance=1.0.15
-
+Mysqlclient=2.1.0

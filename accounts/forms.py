@@ -40,6 +40,6 @@ class CustomLoginForm(AuthenticationForm):
     }
 
     def __init__(self, request=None, *args, **kwargs):
-        super(CustomLoginForm, self).__init__(*args, **kwargs) # 꼭 있어야 한다!
+        super(CustomLoginForm, self).__init__(*args, **kwargs)
         self.fields['username'].label = '아이디'
         self.fields['password'].label = '비밀번호'
